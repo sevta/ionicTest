@@ -1,0 +1,65 @@
+{
+  "name": "photo-gallery-capacitor-react",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^1.4.0",
+    "@capacitor/core": "^1.4.0",
+    "@capacitor/ios": "^1.4.0",
+    "@ionic/pwa-elements": "^1.4.1",
+    "@ionic/react": "^5.0.0",
+    "@ionic/react-hooks": "0.0.6",
+    "@ionic/react-router": "^5.0.0",
+    "@testing-library/jest-dom": "^5.0.2",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^8.1.0",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^13.5.2",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-router": "^5.1.4",
+    "@types/react-router-dom": "^5.1.3",
+    "autoprefixer": "^9.7.4",
+    "express": "^4.17.1",
+    "firebase": "^7.2.3",
+    "firebase-admin": "^8.10.0",
+    "gsap": "^3.2.6",
+    "ionicons": "^5.0.0",
+    "node-sass": "^4.13.1",
+    "postcss": "^7.0.27",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-hooks-global-state": "^1.0.0",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.4.0",
+    "tailwindcss": "^1.2.0",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:styles": "npx tailwindcss build src/theme/tailwind.css -o src/tailwind.css",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^1.4.0"
+  },
+  "description": "An Ionic project"
+}

@@ -1,0 +1,1 @@
+palette = https://colorhunt.co/palette/175532
