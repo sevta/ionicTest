@@ -109,6 +109,7 @@ const App = () => {
             <IonRouterOutlet>
               <PublicRoute path="/signin" component={SignIn} />
               <PublicRoute path="/signup" component={SignUp} />
+              <Redirect exact from="/" to="/signin" />
             </IonRouterOutlet>
             <PrivateRoute path="/app" component={Tabs} />
           </IonPage>
@@ -118,6 +119,6 @@ const App = () => {
   }
 };
 
-console.clear()
+console.clear();
 
 export default App;
