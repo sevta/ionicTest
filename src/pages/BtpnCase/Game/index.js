@@ -20,7 +20,7 @@ import {
 import "./index.scss";
 import Loading from "../../../components/Loading";
 import { TweenLite } from "gsap/all";
-
+import {gsap} from 'gsap'
 export default function Game({ history }) {
   const { type, stage } = useParams();
   const [loadingGame, setLoadingGame] = useState(true);
@@ -68,6 +68,10 @@ function GameBoard() {
   const goalPost = useRef();
   const ball = useRef();
   const pan = useRef();
+
+  useEffect(() => {
+    gsap.registerPlugin(TweenLite)
+  }, [])
 
   useEffect(() => {
     TweenLite.to(ball.current, 1, {

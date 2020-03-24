@@ -118,4 +118,6 @@ const App = () => {
   }
 };
 
+console.clear()
+
 export default App;
