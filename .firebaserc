@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "staging": "ionictest-8fd6f",
+    "default": "ionictest-8fd6f"
+  }
+}
