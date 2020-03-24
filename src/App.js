@@ -42,6 +42,13 @@ import { fire } from "./utils/firebase";
 import Loading from "./components/Loading";
 import { PrivateRoute } from "./utils/PrivateRoute";
 import { PublicRoute } from "./utils/PublicRoute";
+import { Plugins, StatusBarStyle } from "@capacitor/core";
+
+const { StatusBar } = Plugins;
+
+StatusBar.setBackgroundColor({
+  color: "#1eb2a6"
+});
 
 setupConfig({
   // mode: "ios",

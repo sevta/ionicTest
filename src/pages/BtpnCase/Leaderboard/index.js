@@ -11,6 +11,8 @@ import {
   IonList,
   IonItem
 } from "@ionic/react";
+import "./index.scss";
+import { isPlatform } from '@ionic/react';
 
 export default function Leaderboard() {
   const [currentTab, setCurrentTab] = useState("power-up");
@@ -48,11 +50,14 @@ export default function Leaderboard() {
           <IonTitle>Leaderboard</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
+      <IonContent>
+        <div className={isPlatform('ios') ? 'ion-padding' : ''}>
         <IonSegment value={currentTab} onIonChange={onSegmentChanged}>
           <IonSegmentButton value="power-up">Power Up</IonSegmentButton>
           <IonSegmentButton value="level-up">Level Up</IonSegmentButton>
         </IonSegment>
+        </div>
+
         <IonList>
           {Array(20)
             .fill("")
@@ -68,8 +73,10 @@ export default function Leaderboard() {
 function Ranking({ ranking, username }) {
   return (
     <IonItem>
-      <IonLabel>
-        {ranking} {username}
+      <IonLabel className="">
+        <div className="text-sm capitalize">
+          {ranking} {username}
+        </div>
       </IonLabel>
     </IonItem>
   );

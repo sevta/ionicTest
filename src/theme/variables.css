@@ -1,6 +1,13 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
 
+:root,
+:root[mode='md'],
+:root[mode='ios'] {
+  --ion-font-family: 'Rubik', sans-serif;
+  font-family: var(--ion-font-family) !important;
+}
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/

@@ -70,7 +70,7 @@ export default function Profile({ history }) {
           <IonTitle>Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="bg-gray-200">
         <Modal isOpen={showModal} back={() => setShowModal(false)} />
         <div
           style={{
@@ -125,8 +125,8 @@ function BadgesLists({ title, img, onBadgeClick }) {
   return (
     <IonGrid>
       <IonRow>
-        <IonCol>
-          <IonLabel className="ion-padding">{title}</IonLabel>
+        <IonCol className="rounded-lg shadow">
+          <IonLabel className="ion-padding font-semibold text-center text-gray-800 text-lg capitalize">{title}</IonLabel>
           <IonSlides
             options={{
               freeMode: true,
@@ -147,10 +147,10 @@ function BadgesLists({ title, img, onBadgeClick }) {
                   >
                     <div
                       style={{
-                        width: 50,
-                        height: 50
+                        width: 60,
+                        height: 60
                       }}
-                      className="rounded-full overflow-hidden"
+                      className="overflow-hidden"
                     >
                       <img
                         className="h-full w-full"
@@ -164,7 +164,9 @@ function BadgesLists({ title, img, onBadgeClick }) {
                         alt=""
                       />
                     </div>
-                    <IonLabel>badge {i + 1}</IonLabel>
+                    <IonLabel className="text-xs  text-black">
+                      badge {i + 1}
+                    </IonLabel>
                   </IonCard>
                 </IonSlide>
               ))}

@@ -10,6 +10,7 @@ import {
   IonButton
 } from "@ionic/react";
 import { Context } from "../../../utils/store";
+import "./index.scss";
 
 export default function Home() {
   const { state } = useContext(Context);
@@ -22,19 +23,28 @@ export default function Home() {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <div>
-          <IonLabel>
-            Hello
-            {state.user.isAnonymous ? "Anonymous" : state.user.email}
-          </IonLabel>
+        <div className="z-10 relative text-white ion-padding text-3xl font-bold">
+          <span>Hi, </span>
+          <span>{state.user.isAnonymous ? "Anonymous" : state.user.email}</span>
         </div>
+        <div className="rounded-header"></div>
 
-        <IonButton routerLink="/app/stage/power-up" className="text-white">
-          Power Up
-        </IonButton>
-        <IonButton routerLink="/app/stage/level-up" className="text-white">
-          Level Up
-        </IonButton>
+        <div className="flex flex-col justify-start items-start">
+          <IonButton
+            fill="clear"
+            routerLink="/app/stage/power-up"
+            className="text-white"
+          >
+            Power Up
+          </IonButton>
+          <IonButton
+            fill="clear"
+            routerLink="/app/stage/level-up"
+            className="text-white"
+          >
+            Level Up
+          </IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );
