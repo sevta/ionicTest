@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   IonPage,
   IonHeader,
@@ -9,13 +9,17 @@ import {
   IonSegment,
   IonSegmentButton,
   IonList,
-  IonItem
+  IonItem,
+  IonSpinner
 } from "@ionic/react";
 import "./index.scss";
-import { isPlatform } from '@ionic/react';
+import { isPlatform } from "@ionic/react";
+import { db } from "../../../utils/firebase";
+import { Context } from "../../../utils/store";
 
 export default function Leaderboard() {
   const [currentTab, setCurrentTab] = useState("power-up");
+  const { state, dispatch } = useContext(Context);
 
   function onSegmentChanged(ev) {
     let choice = ev.detail.value;
@@ -51,19 +55,25 @@ export default function Leaderboard() {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div className={isPlatform('ios') ? 'ion-padding' : ''}>
-        <IonSegment value={currentTab} onIonChange={onSegmentChanged}>
-          <IonSegmentButton value="power-up">Power Up</IonSegmentButton>
-          <IonSegmentButton value="level-up">Level Up</IonSegmentButton>
-        </IonSegment>
+        <div className={isPlatform("ios") ? "ion-padding" : ""}>
+          <IonSegment value={currentTab} onIonChange={onSegmentChanged}>
+            <IonSegmentButton value="power-up">Power Up</IonSegmentButton>
+            <IonSegmentButton value="level-up">Level Up</IonSegmentButton>
+          </IonSegment>
         </div>
 
         <IonList>
-          {Array(20)
-            .fill("")
-            .map((l, i) => (
-              <Ranking ranking={i + 1} username="Marwahhh" key={i} />
-            ))}
+          {state.topTen ? (
+            state.topTen.map((l, i) => (
+              <Ranking
+                ranking={i + 1}
+                username={state.user.displayName || "Anonymous"}
+                key={i}
+              />
+            ))
+          ) : (
+            <IonSpinner />
+          )}
         </IonList>
       </IonContent>
     </IonPage>
@@ -72,7 +82,7 @@ export default function Leaderboard() {
 
 function Ranking({ ranking, username }) {
   return (
-    <IonItem>
+    <IonItem button>
       <IonLabel className="">
         <div className="text-sm capitalize">
           {ranking} {username}

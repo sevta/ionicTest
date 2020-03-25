@@ -25,7 +25,7 @@ export default function Home() {
       <IonContent className="ion-padding">
         <div className="z-10 relative text-white ion-padding text-3xl font-bold">
           <span>Hi, </span>
-          <span>{state.user.isAnonymous ? "Anonymous" : state.user.email}</span>
+          <span>{state.user.displayName || "Anonymous"}</span>
         </div>
         <div className="rounded-header"></div>
 

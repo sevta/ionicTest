@@ -46,6 +46,12 @@ let reducer = (state, action) => {
         user: {}
       };
     }
+    case "fetch_top_ten": {
+      return {
+        ...state,
+        topTen: action.payload
+      };
+    }
     default:
       return;
   }
@@ -57,7 +63,8 @@ const initialState = {
   users: [],
   users2: [],
   user: {},
-  userAuth: false
+  userAuth: false,
+  topTen: []
 };
 
 const Context = createContext(initialState);

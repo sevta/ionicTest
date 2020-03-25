@@ -38,7 +38,7 @@ import SignIn from "./pages/BtpnCase/Auth/SignIn";
 import SignUp from "./pages/BtpnCase/Auth/SignUp";
 import { Context } from "./utils/store";
 import Tabs from "./Tabs";
-import { fire } from "./utils/firebase";
+import { fire, db } from "./utils/firebase";
 import Loading from "./components/Loading";
 import { PrivateRoute } from "./utils/PrivateRoute";
 import { PublicRoute } from "./utils/PublicRoute";
@@ -65,13 +65,31 @@ const App = () => {
   }, [state.darkMode]);
 
   useEffect(() => {
+    console.log("user change", state.user);
+  }, [state.user]);
+
+  useEffect(() => {
     // seeding fake user
     fetchUsers(12, data => dispatch({ type: "seed_users", payload: data }));
     fetchUsers(40, data => dispatch({ type: "seed_users2", payload: data }));
 
+    getAllUsers();
+
     // auth check
     checkUserAuth();
   }, []);
+
+  function getAllUsers() {
+    db.collection("users")
+      .limit(10)
+      .onSnapshot(doc => {
+        let data = [];
+        doc.forEach(d => {
+          data.push(d.data());
+          dispatch({ type: "fetch_top_ten", payload: data });
+        });
+      });
+  }
 
   function checkUserAuth() {
     fire.auth().onAuthStateChanged(user => {
@@ -80,16 +98,34 @@ const App = () => {
       if (user) {
         console.log("Authed ?", user);
 
-        dispatch({ type: "user_auth", payload: true });
-        dispatch({
-          type: "add_user",
-          payload: {
-            displayName: user.displayName,
-            photoUrl: user.photoURL,
-            email: user.email,
-            isAnonymous: user.isAnonymous
-          }
-        });
+        // realtime update user every they changed field
+        db.collection("users")
+          .doc(user.uid)
+          .onSnapshot(doc => {
+            let user = doc.data();
+            dispatch({ type: "user_auth", payload: true });
+            dispatch({
+              type: "add_user",
+              payload: {
+                uid: user.uid,
+                refreshToken: user.refreshToken,
+                photoUrl: user.photoURL,
+                displayName: user.displayName,
+                email: user.email,
+                isAnonymous: user.isAnonymous,
+                game: {
+                  powerUpScore: {
+                    currentLevel: 0,
+                    score: 0
+                  },
+                  levelUpScore: {
+                    currentLevel: 0,
+                    score: 0
+                  }
+                }
+              }
+            });
+          });
       } else {
         console.log("not auth");
         dispatch({ type: "user_auth", payload: false });

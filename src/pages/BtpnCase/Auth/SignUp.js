@@ -35,9 +35,20 @@ export default function SignUp({ history }) {
           .set({
             uid: resp.user.uid,
             refreshToken: resp.user.refreshToken,
+            photoUrl: resp.user.photoURL,
             displayName: resp.user.displayName,
             email: resp.user.email,
-            isAnonymous: resp.user.isAnonymous
+            isAnonymous: resp.user.isAnonymous,
+            game: {
+              powerUpScore: {
+                currentLevel: 0,
+                score: 0
+              },
+              levelUpScore: {
+                currentLevel: 0,
+                score: 0
+              }
+            }
           })
           .then(docRef => {
             console.log(docRef);
