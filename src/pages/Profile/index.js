@@ -26,7 +26,8 @@ import {
   IonSpinner,
   IonImg,
   IonProgressBar,
-  IonActionSheet
+  IonActionSheet,
+  IonLoading
 } from "@ionic/react";
 import AppContext from "../../utils/state";
 import { usePhotoGallery } from "../../hooks/usePhotoGallery";
@@ -37,6 +38,7 @@ import { fire, db, storageRef } from "../../utils/firebase";
 import "./index.scss";
 import Modal from "./Modal";
 import { pencilOutline, pencilSharp, camera } from "ionicons/icons";
+import { useParams } from "react-router";
 
 const { Camera } = Plugins;
 
@@ -54,6 +56,12 @@ export default function Profile({ history }) {
   const [openActionSheet, setOpenActionSheet] = useState(false);
   const [onBackClickFromEditModal, setOnBackClickFromEditModal] = useState();
 
+  const [loadingPage, setLoadingPage] = useState(true);
+
+  const [currentUser, setCurrentUser] = useState({});
+
+  const { id } = useParams();
+
   const fileRef = useRef();
   let uploadTask = {};
 
@@ -66,26 +74,13 @@ export default function Profile({ history }) {
     } else {
       setImgUrl(state.user.photoUrl);
     }
+
+    console.log("params", id);
   }, []);
 
-  function testPhoto() {
-    return;
-    Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      source: CameraSource.camera,
-      resultType: CameraResultType.Uri
-    })
-      .then(resp => {
-        setMsg(resp);
-        setImgUrl(resp);
-        storageRef.ref().putString(
-          resp.webPath,
-          "data_url".then(snap => setMsg(snap))
-        );
-      })
-      .catch(err => setMsg(err));
-  }
+  useEffect(() => {
+    getUser(id);
+  }, [id]);
 
   function updateUsername(ev) {
     let value = ev.target.value;
@@ -123,6 +118,23 @@ export default function Profile({ history }) {
       console.log("on back", uploadTask);
     }
   }, [onBackClickFromEditModal]);
+
+  function getUser(id) {
+    db.collection("users")
+      .doc(id)
+      .get()
+      .then(doc => {
+        console.log("current user", doc.data());
+        setCurrentUser(doc.data());
+        setImgUrl(
+          doc.data().photoURL ||
+            "https://images.unsplash.com/photo-1557991666-3dc7eae97614?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"
+        );
+        setTimeout(() => {
+          setLoadingPage(false);
+        }, 500);
+      });
+  }
 
   function saveEditProfile() {
     setLoadingSaveEditProfile(true);
@@ -197,15 +209,22 @@ export default function Profile({ history }) {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="end">
-            <IonButton onClick={doOpenModalEdit}>
-              <IonLabel>Edit</IonLabel>
-            </IonButton>
-          </IonButtons>
+          {currentUser.uid == state.user.uid && (
+            <IonButtons slot="end">
+              <IonButton onClick={doOpenModalEdit}>
+                <IonLabel>Edit</IonLabel>
+              </IonButton>
+            </IonButtons>
+          )}
+
           <IonTitle>Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="bg-gray-200" fullscreen>
+        <IonLoading
+          isOpen={loadingPage}
+          onDidDismiss={() => setLoadingPage(false)}
+        ></IonLoading>
         <Modal
           title="Edit"
           isOpen={showModalEdit}
@@ -329,7 +348,7 @@ export default function Profile({ history }) {
           </div>
           <IonLabel className="mt-4 text-white">
             <div className=" font-bold text-xl">
-              {state.user.displayName || "Anonymous"}
+              {currentUser.displayName || "Anonymous"}
             </div>
             <div className="text-center text-gray-100 font-bold text-sm">
               2.000 point

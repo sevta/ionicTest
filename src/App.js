@@ -65,8 +65,8 @@ const App = () => {
   }, [state.darkMode]);
 
   useEffect(() => {
-    console.log("user change", state.user);
-  }, [state.user]);
+    console.log("user change", state.user.topTen);
+  }, [state.user.topTen]);
 
   useEffect(() => {
     // seeding fake user
@@ -84,10 +84,13 @@ const App = () => {
       .limit(10)
       .onSnapshot(doc => {
         let data = [];
+
         doc.forEach(d => {
+          console.log(d.data());
           data.push(d.data());
-          dispatch({ type: "fetch_top_ten", payload: data });
         });
+        console.log("data", data);
+        dispatch({ type: "fetch_top_ten", payload: data });
       });
   }
 
@@ -125,13 +128,14 @@ const App = () => {
                 }
               }
             });
+            setLoadingCheckAuth(false);
           });
       } else {
         console.log("not auth");
         dispatch({ type: "user_auth", payload: false });
         dispatch({ type: "remove_user" });
+        setLoadingCheckAuth(false);
       }
-      setLoadingCheckAuth(false);
     });
   }
 
