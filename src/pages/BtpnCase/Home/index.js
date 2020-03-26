@@ -29,16 +29,16 @@ export default function Home() {
         </div>
         <div className="rounded-header"></div>
 
-        <div className="flex flex-col justify-start items-start">
+        <div className="flex flex-col justify-start items-start ion-padding pt-0">
           <IonButton
-            fill="clear"
+            color="dark"
             routerLink="/app/stage/power-up"
             className="text-white"
           >
             Power Up
           </IonButton>
           <IonButton
-            fill="clear"
+            color="dark"
             routerLink="/app/stage/level-up"
             className="text-white"
           >

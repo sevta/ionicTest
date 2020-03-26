@@ -19,8 +19,10 @@ import {
 } from "ionicons/icons";
 import "./index.scss";
 import Loading from "../../../components/Loading";
-import { TweenLite } from "gsap/all";
-import {gsap} from 'gsap'
+import { TweenLite, Draggable, Linear, TweenMax } from "gsap/all";
+import { gsap } from "gsap";
+import { moment } from "moment-timer";
+
 export default function Game({ history }) {
   const { type, stage } = useParams();
   const [loadingGame, setLoadingGame] = useState(true);
@@ -30,7 +32,7 @@ export default function Game({ history }) {
     console.log("stage", stage);
     setTimeout(() => {
       setLoadingGame(false);
-    }, 3000);
+    }, 100);
   }, []);
 
   return (
@@ -64,20 +66,129 @@ function GameBoard() {
   const [ballX, setBallX] = useState(30);
   const [panX, setPanX] = useState(0);
   const [isFirstShoot, setIsFirstShoot] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [goalPostX, setGoalPostX] = useState(0);
+  const [speed, setSpeed] = useState(5);
+  const [panState, setPanState] = useState("right");
+  const [score, setScore] = useState(0);
+  const padWidth = 60;
+
+  let interval;
 
   const goalPost = useRef();
   const ball = useRef();
   const pan = useRef();
+  const redLine = useRef();
 
   useEffect(() => {
-    gsap.registerPlugin(TweenLite)
-  }, [])
+    gsap.registerPlugin(TweenLite);
+    gsap.registerPlugin(Draggable);
+    gsap.registerPlugin(TweenMax);
+    setDefaultTween();
+    animatePan();
+
+    console.log("moment", moment);
+  }, []);
 
   useEffect(() => {
-    TweenLite.to(ball.current, 1, {
-      y: value
+    animatePan(panState);
+  }, [panState]);
+
+  function setDefaultTween() {
+    TweenLite.set(redLine.current, {
+      x: 0,
+      y: 0
+    });
+  }
+
+  function animatePan(state) {
+    if (state == "right") {
+      TweenLite.to(goalPost.current, speed, {
+        x: windowWidth - padWidth,
+        ease: Linear.easeNone,
+        onComplete() {
+          setPanState("left");
+        }
+      });
+    } else if (state == "left") {
+      TweenLite.to(goalPost.current, speed, {
+        x: 0,
+        ease: Linear.easeNone,
+        onComplete() {
+          setPanState("right");
+        }
+      });
+    }
+  }
+
+  function ifBallHitGoalPost(callback) {
+    let hitGoalPost = checkHit(goalPost.current, "0%");
+    let hitRedLine = checkHit(redLine.current, "30%");
+    if (hitGoalPost) {
+      console.log("hit goal post");
+      TweenLite.to(ball.current, 0.4, {
+        y: 10,
+        onComplete() {
+          // TweenMax.killTweensOf(ball.current);
+          setValue(0);
+          setIsFirstShoot(false);
+          TweenLite.set(ball.current, {
+            left: ballX,
+            y: 0,
+            autoAlpha: 1,
+            scale: 1,
+            onComplete() {
+              callback("pan");
+            }
+          });
+        }
+      });
+    }
+    if (hitRedLine) {
+      TweenLite.to(ball.current, 0.3, {
+        scale: 2,
+        autoAlpha: 0,
+        onComplete() {
+          TweenMax.killTweensOf(ball.current);
+          setValue(0);
+          setIsFirstShoot(false);
+          TweenLite.set(ball.current, {
+            left: ballX,
+            y: 0,
+            autoAlpha: 1,
+            scale: 1,
+            onComplete() {
+              callback("redline");
+            }
+          });
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    let count = 0;
+    TweenLite.to(ball.current, 1.1, {
+      y: value,
+      onUpdate() {
+        count++;
+        ifBallHitGoalPost(hit => {
+          console.log("what hit", hit);
+          console.log(count);
+          if (hit == "pan") {
+            setScore(score => (score += 10));
+            count = 0;
+          }
+        });
+      }
     });
   }, [value]);
+
+  function checkHit(src, depth) {
+    let $ball = document.querySelector(".ball");
+    return Draggable.hitTest($ball, src, depth);
+  }
 
   useEffect(() => {
     if (!isFirstShoot) {
@@ -92,7 +203,15 @@ function GameBoard() {
 
   function panClick() {
     setIsFirstShoot(true);
-    setValue(prev => (prev -= 150));
+    TweenLite.to(pan.current, 0.1, {
+      scale: 1.2,
+      onComplete() {
+        TweenLite.to(pan.current, 0.2, {
+          scale: 1
+        });
+      }
+    });
+    setValue(prev => -(window.innerHeight - 150));
   }
 
   function movePan(state) {
@@ -109,13 +228,11 @@ function GameBoard() {
 
   return (
     <div className="game-board">
-      <div className="goal-post shadow-lg bg-purple-400" ref={goalPost}></div>
+      <div className="goal-post shadow bg-white" ref={goalPost}></div>
       <div className="ball bg-pink-600 shadow-lg" ref={ball}></div>
-      <div
-        className="pan bg-teal-600 shadow-lg"
-        onClick={panClick}
-        ref={pan}
-      ></div>
+      <div className="red-line" ref={redLine}></div>
+      <div className="text-white p-2">Score {score}</div>
+      <div className="pan bg-white shadow" onClick={panClick} ref={pan}></div>
       {!isFirstShoot && (
         <React.Fragment>
           <IonButton
